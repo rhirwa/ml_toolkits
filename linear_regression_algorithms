@@ -1,0 +1,58 @@
+##normal equation for mse 
+#some linear data
+import numpy as np 
+np.random.seed(42) #same seed
+m = 100 #instances 
+X = 2 *np.random.rand(m, 1) #column vector 
+y = 4 + 3 * X + np.random.rand(m, 1) #column vector 
+
+#theta that best minimizes the cost function
+from sklearn.preprocessing import add_dummy_feature
+X_b = add_dummy_feature(X) #adds x0 = 1 to each instance
+theta_best = np.linalg.inv(X_b.T @ X_b) @ X_b.T @ y #inverse of our matrix, then multiplication
+
+##GRADIENT DESCENT
+eta = 0.1 #learning rate
+n_epochs = 1000 
+m = len(X_b) #instances 
+np.random.seed(42)
+theta = np.random.randn(2, 1) #parameter random initialization
+for epoch in range(n_epochs):
+    gradients = 2/m *X_b.T @ (X_b @ theta - y)
+    theta = theta - eta *gradients 
+
+#STOCHASTIC GRADIENT DESCENT
+n_epochs = 50
+t0, t1 = 5, 50  # learning schedule hyperparameters
+
+def learning_schedule(t):
+    return t0 / (t + t1)
+
+np.random.seed(42)
+theta = np.random.randn(2, 1)  # random initialization
+
+for epoch in range(n_epochs):
+    for iteration in range(m):
+        random_index = np.random.randint(m)
+        xi = X_b[random_index : random_index + 1]
+        yi = y[random_index : random_index + 1]
+        gradients = 2 * xi.T @ (xi @ theta - yi)  # for SGD, do not divide by m
+        eta = learning_schedule(epoch * m + iteration)
+        theta = theta - eta * gradients
+
+#using the scikit-learn library 
+from sklearn.linear_model import SGDRegressor
+
+sgd_reg = SGDRegressor(max_iter=1000, tol=1e-5, penalty=None, eta0=0.01,
+                       n_iter_no_change=100, random_state=42)
+sgd_reg.fit(X, y.ravel())  # y.ravel() because fit() expects 1D targets
+
+#POLYNOMIAL REGRESSION
+np.random.seed(42)
+m = 100
+X = 6 * np.random.rand(m, 1) - 3
+y = 0.5 * X ** 2 + X + 2 + np.random.randn(m, 1)
+from sklearn.preprocessing import PolynomialFeatures
+poly_features = PolynomialFeatures(degree = 2, include_bias=False)
+X_poly = poly_features.fit_transform(X)
+#then apply linear regression from here on out on X_poly
