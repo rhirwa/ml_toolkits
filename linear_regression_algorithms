@@ -56,3 +56,27 @@ from sklearn.preprocessing import PolynomialFeatures
 poly_features = PolynomialFeatures(degree = 2, include_bias=False)
 X_poly = poly_features.fit_transform(X)
 #then apply linear regression from here on out on X_poly
+
+#CHECKING LEARNING CURVES
+from sklearn.model_selection import learning_curve
+from sklearn.linear_model import LinearRegression
+import matplotlib.pyplot as plt
+train_sizes, train_scores, valid_scores = learning_curve(LinearRegression(), X, y, 
+train_sizes = np.linespace(0.01, 1, 40), cv = 5, scoring = "neg_root_mean_squared_error")
+train_errors = -train_scores.mean(axis=1)
+valid_scores = -valid_scores.mean(axis=1)
+plt.plot(train_sizes, train_errors, "r-+", linewidth=2, label="train")
+plt.plot(train_sizes, valid_scores, "b-", linewidth=3, label="valid")
+[...]  # beautify the figure: add labels, axis, grid, and legend
+plt.show()
+
+#checking polynomial regression 
+from sklearn.pipeline import make_pipeline
+
+polynomial_regression = make_pipeline(
+    PolynomialFeatures(degree=10, include_bias=False),
+    LinearRegression())
+
+train_sizes, train_scores, valid_scores = learning_curve(
+    polynomial_regression, X, y, train_sizes=np.linspace(0.01, 1.0, 40), cv=5,
+    scoring="neg_root_mean_squared_error") # same as earlier
