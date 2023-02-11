@@ -67,7 +67,7 @@ train_errors = -train_scores.mean(axis=1)
 valid_scores = -valid_scores.mean(axis=1)
 plt.plot(train_sizes, train_errors, "r-+", linewidth=2, label="train")
 plt.plot(train_sizes, valid_scores, "b-", linewidth=3, label="valid")
-[...]  # beautify the figure: add labels, axis, grid, and legend
+# beautify the figure: add labels, axis, grid, and legend
 plt.show()
 
 #checking polynomial regression 
